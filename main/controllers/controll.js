@@ -7,7 +7,21 @@ module.exports = {
   },
   // All
   unitTest: (req, res) => {
-    unitModel.unitTest()
+    const secname = req.query.secname
+    unitModel.unitTest(secname)
+      .then((userResult) => {
+        const result = userResult
+        unitHelp.response(res, result, 200)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  },
+  // // id
+  unitById: (req, res) => {
+    console.log(req.params.id)
+    const byId = req.params.id
+    unitModel.unitById(byId)
       .then((userResult) => {
         const result = userResult
         unitHelp.response(res, result, 200)
@@ -47,7 +61,8 @@ module.exports = {
       name: req.body.name,
       writer: req.body.writer,
       location: req.body.location,
-      category: req.body.category
+      category: req.body.category,
+      description: req.body.description
     }
     unitModel.unitUpdate(id, data)
       .then((userResult) => {
@@ -61,10 +76,12 @@ module.exports = {
   // POST data
   unitAdd: (req, res) => {
     const data = {
+      image_url: req.body.image_url,
       name: req.body.name,
       writer: req.body.writer,
       location: req.body.location,
       category: req.body.category,
+      description: req.body.description,
       create: new Date(),
       update: new Date()
     }

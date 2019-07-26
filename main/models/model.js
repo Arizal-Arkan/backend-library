@@ -4,7 +4,7 @@ module.exports = {
   // All
   unitTest: () => {
     return new Promise((resolve, reject) => {
-      conn.query('SELECT buku.id, buku.name, buku.writer, buku.location, category_id.name as category, buku.create, buku.update FROM buku INNER JOIN category_id ON buku.category = category_id.category', (err, result) => {
+      conn.query('SELECT buku.id, buku.name, buku.image_url, buku.writer, buku.location, buku.description, buku.update, category.name as category, buku.create, buku.update FROM buku INNER JOIN category ON buku.category = category.category_id', (err, result) => {
         if (!err) {
           resolve(result)
         } else {
@@ -13,10 +13,30 @@ module.exports = {
       })
     })
   },
+  unitById: (id, result) => {
+    return new Promise((resolve, reject) => {
+      conn.query(
+        `SELECT buku.name, buku.writer, buku.location, buku.image_url, buku.category,
+            buku.description, buku.update
+            FROM buku
+            INNER JOIN category
+            ON buku.category = category.category_id
+            WHERE buku.id = ?`,
+        Number(id),
+        (err, res) => {
+          if (!err) {
+            resolve(res)
+          } else {
+            reject(new Error(err))
+          }
+        }
+      )
+    })
+  },
   // Category
   unitCategory: (category) => {
     return new Promise((resolve, reject) => {
-      conn.query('SELECT buku.id, buku.name, buku.writer, buku.location, category_id.name as category, buku.create, buku.update FROM buku INNER JOIN category_id ON buku.category = category_id.category WHERE buku.category = ?', category, (err, result) => {
+      conn.query('SELECT buku.id, buku.name, buku.image_url, buku.writer, buku.location, category.name as category, buku.create, buku.update FROM buku INNER JOIN category ON buku.category = category.category_id WHERE buku.category = ?', category, (err, result) => {
         if (!err) {
           resolve(result)
         } else {
@@ -28,7 +48,7 @@ module.exports = {
   // Location
   unitLocation: (location) => {
     return new Promise((resolve, reject) => {
-      conn.query('SELECT buku.id, buku.name, buku.writer, buku.location, category_id.name as category, buku.create, buku.update FROM buku INNER JOIN category_id ON buku.category = category_id.category WHERE location = ?', location, (err, result) => {
+      conn.query('SELECT buku.id, buku.name, buku.image_url, buku.writer, buku.location, category.name as category, buku.create, buku.update FROM buku INNER JOIN category ON buku.category = category.category_id WHERE location = ?', location, (err, result) => {
         if (!err) {
           resolve(result)
         } else {
