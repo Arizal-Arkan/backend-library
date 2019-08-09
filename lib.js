@@ -1,42 +1,40 @@
 require('dotenv').config()
-const bodyParser = require('body-parser')
-const express = require('express')
-const lib = express()
-const port = process.env.SERVER_PORT || 7000
-const cors = require('cors')
-const logger = require('morgan')
-const xssFilter = require('x-xss-protection')
-const routeUser = require('../Task4/main/routes/route')
-const categoryRoute = require('./main/routes/categoryRoute')
-const userRoute = require('./main/routes/userRoute')
-const whitelist = process.env.WHITELIST
 
-var corsOptions = (req, callback) => {
+const express = require('express')
+const app = express()
+const port = process.env.SERVER_PORT
+const bodyParser = require('body-parser')
+const bookRouter = require('./main/routes/route')
+const categoryRouter = require('./main/routes/categoryRoute')
+const userRouter = require('./main/routes/userRoute')
+const pinjamRouter = require('./main/routes/borrowRoute')
+const cors = require('cors')
+const xss = require('x-xss-protection')
+
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+const whitelist = '127.0.0.1,192.168.6.135'
+const corsOption = (req, callback) => {
   if (whitelist.split(',').indexOf(req.hostname) !== -1) {
-    console.log('Succses')
+    console.log('Success')
     return callback(null, {
       origin: true
     })
   } else {
     console.log('Failed')
-    return callback(null, {
+    return callback('Not allowed by CORS', {
       origin: false
     })
   }
 }
-
-lib.use(cors(corsOptions))
-lib.options('*', cors(corsOptions))
-lib.use(xssFilter)
-lib.use(logger('div'))
-
-lib.listen(port, () => {
-  console.log(`\n App listening on port ${port} \n`)
+app.use(xss())
+app.use(cors())
+app.options('*', cors(corsOption))
+app.listen(port, () => {
+  console.log(`Kamu di ${port}`)
 })
-
-lib.use(bodyParser.json())
-lib.use(bodyParser.urlencoded({ extended: false }))
-
-lib.use('/book', routeUser)
-lib.use('/category', categoryRoute)
-lib.use('/user', userRoute)
+app.use(express.static('./main/uploads'))
+app.use('/book', bookRouter)
+app.use('/user', userRouter)
+app.use('/category', categoryRouter)
+app.use('/pinjam', pinjamRouter)

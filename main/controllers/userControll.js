@@ -3,7 +3,6 @@ const MiscHelper = require('../helpers/helpers')
 const jwt = require('jsonwebtoken')
 
 module.exports = {
-
   getUsers: (req, res) => {
     userModels.getUsers()
       .then((result) => {
@@ -13,9 +12,8 @@ module.exports = {
         console.log(error)
       })
   },
-
   postUser: (req, res) => {
-    const salt = MiscHelper.generateSalt()
+    const salt = MiscHelper.generateSalt(8)
     const passwordHash = MiscHelper.setPassword(req.body.password, salt)
     const data = {
       no_ktp: req.body.no_ktp,
@@ -40,22 +38,20 @@ module.exports = {
       })
   },
   getByEmail: (req, res) => {
-    const email = req.body.email || req.query.email || ''
-    const password = req.body.password || req.query.password || ''
+    const email = req.body.email
+    const password = req.body.password
     login(email, password, res)
   }
 }
 
 function login (email, password, res) {
-  console.log(email + ' ' + password)
   userModels.getByEmail(email)
     .then((result) => {
+      console.log('dsd')
       console.log(result)
       if (result.length > 0) {
         const dataUser = result[0]
         const userPassword = MiscHelper.setPassword(password, dataUser.salt).passwordHash
-        console.log('Data User' + dataUser.password)
-        console.log('User Password' + userPassword)
         if (userPassword === dataUser.password) {
           dataUser.token = jwt.sign({
             userid: dataUser.id

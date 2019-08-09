@@ -1,11 +1,11 @@
 const express = require('express')
 const Route = express.Router()
-
-const UserController = require('../controllers/userControll')
+const controller = require('../controllers/userControll')
 const Auth = require('../helpers/auth')
-
-Route.get('/', UserController.getUsers)
-  .post('/register', UserController.postUser)
-  .post('login', UserController.getByEmail)
+Route
+  .get('/', controller.getUsers)
+  .post('/register', controller.postUser)
+  .post('/login', controller.getByEmail)
+  .post('/getToken', Auth.authInfo, Auth.accessToken)
 
 module.exports = Route

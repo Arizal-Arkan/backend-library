@@ -3,7 +3,7 @@ const connection = require('../configs/db')
 module.exports = {
   getUsers: () => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT user.*,role.name FROM user INNER JOIN role ON user.role_id = role.id', (err, result) => {
+      connection.query('SELECT user.*,role.name as role FROM user INNER JOIN role ON user.role_id = role.id', (err, result) => {
         if (!err) {
           resolve(result)
         } else {
@@ -30,6 +30,7 @@ module.exports = {
       connection.query('SELECT user.*,role.name as role FROM user INNER JOIN role ON role.id=user.role_id WHERE email=?', email, (err, result) => {
         if (!err) {
           resolve(result)
+          console.log(result)
         } else {
           reject(err)
         }

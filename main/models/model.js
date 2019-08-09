@@ -2,11 +2,13 @@ const conn = require('../configs/db')
 
 module.exports = {
   // All
-  unitTest: () => {
+  unitTest: (search) => {
+    const keyword = `%${search}%`
     return new Promise((resolve, reject) => {
-      conn.query('SELECT buku.id, buku.name, buku.image_url, buku.writer, buku.location, buku.description, buku.update, category.name as category, buku.create, buku.update FROM buku INNER JOIN category ON buku.category = category.category_id', (err, result) => {
+      conn.query('SELECT buku.id, buku.name, buku.image_url, buku.writer, buku.location, buku.description, buku.update, buku.status, category.name as category, buku.create, buku.update FROM buku INNER JOIN category ON buku.category = category.category_id WHERE buku.name LIKE ? ',keyword, (err, result) => {
         if (!err) {
           resolve(result)
+          console.log(result)
         } else {
           reject(new Error(err))
         }
@@ -14,15 +16,17 @@ module.exports = {
     })
   },
   unitById: (id, result) => {
+    console.log(id);
+    
     return new Promise((resolve, reject) => {
       conn.query(
         `SELECT buku.name, buku.writer, buku.location, buku.image_url, buku.category,
-            buku.description, buku.update
+            buku.description, buku.update, buku.status
             FROM buku
             INNER JOIN category
             ON buku.category = category.category_id
             WHERE buku.id = ?`,
-        Number(id),
+        id,
         (err, res) => {
           if (!err) {
             resolve(res)
@@ -81,6 +85,17 @@ module.exports = {
       })
     })
   },
+  patchBook :(data,id) => {
+    return new Promise((resolve, reject) => {
+        con.query('UPDATE buku SET ? WHERE id = ?', [data, id], (err, result) => {
+            if (!err) {
+                resolve(result)
+            } else {
+                reject(new Error(err))
+            }
+        })
+    })
+},
   // Delete
   unitDelete: (id) => {
     return new Promise((resolve, reject) => {

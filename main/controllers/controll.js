@@ -7,8 +7,8 @@ module.exports = {
   },
   // All
   unitTest: (req, res) => {
-    const secname = req.query.secname
-    unitModel.unitTest(secname)
+    let keyword = req.query.search || ''
+    unitModel.unitTest(keyword)
       .then((userResult) => {
         const result = userResult
         unitHelp.response(res, result, 200)
@@ -19,10 +19,11 @@ module.exports = {
   },
   // // id
   unitById: (req, res) => {
-    console.log(req.params.id)
+    
     const byId = req.params.id
     unitModel.unitById(byId)
       .then((userResult) => {
+        console.log(userResult)
         const result = userResult
         unitHelp.response(res, result, 200)
       })
@@ -75,8 +76,12 @@ module.exports = {
   },
   // POST data
   unitAdd: (req, res) => {
+    console.log(req.file)
+    console.log(req.body)
+    
     const data = {
-      image_url: req.body.image_url,
+      image_url: `http://192.168.6.135:2001/${req.file.filename}`,
+      status:false,
       name: req.body.name,
       writer: req.body.writer,
       location: req.body.location,
@@ -87,8 +92,7 @@ module.exports = {
     }
     unitModel.unitAdd(data)
       .then((userResult) => {
-        const result = userResult
-        unitHelp.response(res, result, 200)
+        res.json({ ...data, id: userResult.insertId })
       })
       .catch((error) => {
         console.log(error)
@@ -105,5 +109,25 @@ module.exports = {
       .catch((error) => {
         console.log(error)
       })
-  }
+  },
+  patchBook: (req, res) => {
+    const data = {
+        writer: req.body.writer,
+        updated_at: new Date(),
+        description: req.body.description,
+        name: req.body.name,
+        image_url: req.body.image_url,
+        location: req.body.location,
+        category: req.body.category
+    }
+    const bookid = req.params.bookid
+    model.patchBook(data, bookid)
+        .then((results) => {
+            unitHelp.response(res, { ...data, bookid, category: req.body.category }, 200)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+ },
 }
+
