@@ -2,10 +2,10 @@ require('dotenv').config()
 
 const mysql = require('mysql')
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  host: 'remotemysql.com',
+  user: '7q682wbJYk',
+  password: '0Sqy6dzSQt',
+  database: '7q682wbJYk'
 })
 
 connection.connect((err) => {

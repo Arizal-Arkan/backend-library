@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const express = require('express')
 const app = express()
-const port = process.env.SERVER_PORT
+const port = process.env.PORT
 const bodyParser = require('body-parser')
 const bookRouter = require('./main/routes/route')
 const categoryRouter = require('./main/routes/categoryRoute')

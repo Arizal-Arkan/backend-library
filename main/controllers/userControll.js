@@ -55,7 +55,7 @@ function login (email, password, res) {
         if (userPassword === dataUser.password) {
           dataUser.token = jwt.sign({
             userid: dataUser.id
-          }, process.env.SECRET_KEY, { expiresIn: '1h' })
+          }, 'KEY', { expiresIn: '1h' })
           delete dataUser.salt
           delete dataUser.password
           return res.json(dataUser)
