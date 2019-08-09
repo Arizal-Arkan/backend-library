@@ -75,12 +75,29 @@ module.exports = {
       })
   },
   // POST data
-  unitAdd: (req, res) => {
-    console.log(req.file)
-    console.log(req.body)
+  unitAdd: async (req, res) => {
+    let path = req.file.path
+        let geturl = async (req) =>{
+            cloudinary.config({
+                cloud_name: 'dbxxfaool',
+                api_key: '674248784158649',
+                api_secret: 'VmI6ER9fZNwd6BFyl1gl-GkZEe8'
+            })
+
+            let data
+            await cloudinary.uploader.upload(path, (result)=>{
+                const fs = require('fs')
+                fs.unlinkSync(path)
+                data = result.url
+            })
+
+            return data
+        }
+        let filename = 'images/' + req.file.filename
+        console.log("FILENYA: ", filename)
     
     const data = {
-      image_url: `http://192.168.6.135:2001/${req.file.filename}`,
+      image_url: await geturl,
       status:false,
       name: req.body.name,
       writer: req.body.writer,
